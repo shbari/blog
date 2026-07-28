@@ -140,15 +140,15 @@ title: Latest Articles
 
   <!-- Integrated Real-time Search Input -->
   <div class="search-wrapper">
-    <input type="text" id="search-bar" class="search-input" placeholder="Search by article title or keywords..." onkeyup="executeSearchAndFilter()">
+    <input type="text" id="search-bar" class="search-input" placeholder="Search by article title or keywords..." oninput="executeSearchAndFilter()">
   </div>
 
   <!-- Responsive Dynamic Tag Menu -->
   <div class="tag-container">
     <button onclick="selectTag('all', this)" class="tag-btn" id="default-tag-btn" style="background-color: #007681; color: white; border-color: #007681;">All Posts</button>
-    {% assign tags = site.tags | sort %}
-    {% for tag in tags %}
-      <button onclick="selectTag('{{ tag }}', this)" class="tag-btn">#{{ tag }}</button>
+    {% assign sorted_tags = site.tags | sort %}
+    {% for tag in sorted_tags %}
+      <button onclick="selectTag('{{ tag[0] }}', this)" class="tag-btn">#{{ tag[0] }}</button>
     {% endfor %}
   </div>
 
@@ -180,7 +180,6 @@ title: Latest Articles
 let currentActiveTag = 'all';
 
 function selectTag(tagName, clickedButton) {
-  // 1. Reset all button styles to default unselected look
   const buttons = document.querySelectorAll('.tag-btn');
   buttons.forEach(btn => {
     btn.style.backgroundColor = '#f9fafb';
@@ -188,13 +187,11 @@ function selectTag(tagName, clickedButton) {
     btn.style.borderColor = '#e5e7eb';
   });
 
-  // 2. Highlight selected button and update track state
   clickedButton.style.backgroundColor = '#007681';
   clickedButton.style.color = 'white';
   clickedButton.style.borderColor = '#007681';
   currentActiveTag = tagName.toLowerCase();
 
-  // 3. Process the changes instantly
   executeSearchAndFilter();
 }
 
@@ -204,16 +201,13 @@ function executeSearchAndFilter() {
   let visibleCount = 0;
 
   posts.forEach(post => {
-    const postTitle = post.getAttribute('data-title');
-    const postTags = post.getAttribute('data-tags').split(',');
+    const postTitle = post.getAttribute('data-title') || '';
+    const postTagsAttribute = post.getAttribute('data-tags') || '';
+    const postTags = postTagsAttribute.split(',');
 
-    // Evaluate tag criteria
     const matchesTag = (currentActiveTag === 'all' || postTags.includes(currentActiveTag));
-    
-    // Evaluate search bar criteria
     const matchesSearch = (postTitle.includes(searchQueries) || postTags.some(t => t.includes(searchQueries)));
 
-    // Combined conditional visibility check
     if (matchesTag && matchesSearch) {
       post.style.display = 'block';
       visibleCount++;
@@ -222,7 +216,6 @@ function executeSearchAndFilter() {
     }
   });
 
-  // Toggle "No results" banner dynamically
   const fallbackMsg = document.getElementById('no-results-msg');
   if (visibleCount === 0) {
     fallbackMsg.style.display = 'block';
@@ -231,7 +224,7 @@ function executeSearchAndFilter() {
   }
 }
 
-// Mobile/Tablet-friendly hover handling via event listeners
+// Hover event listeners for modern UI response
 document.querySelectorAll('.tag-btn').forEach(btn => {
   btn.addEventListener('mouseenter', () => {
     if (btn.style.backgroundColor !== 'rgb(0, 118, 129)') {
