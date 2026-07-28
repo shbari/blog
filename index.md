@@ -12,7 +12,7 @@ Welcome to my space! I write about hydrology research, climate systems, coding, 
   <button onclick="filterTag('all', this)" class="tag-btn active-tag" style="padding: 6px 14px; border: 1px solid #007681; background-color: #007681; color: white; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.2s ease; font-weight: 500;">All Posts</button>
   {% assign tags = site.tags | sort %}
   {% for tag in tags %}
-    <button onclick="filterTag('{{ tag }}', this)" class="tag-btn" style="padding: 6px 14px; border: 1px solid #d1d5db; background-color: #f9fafb; color: #374151; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.2s ease; font-weight: 500;">#{{ tag }}</button>
+    <button onclick="filterTag('{{ tag[0] }}', this)" class="tag-btn" style="padding: 6px 14px; border: 1px solid #d1d5db; background-color: #f9fafb; color: #374151; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.2s ease; font-weight: 500;">#{{ tag[0] }}</button>
   {% endfor %}
 </div>
 
@@ -65,7 +65,7 @@ function filterTag(tagName, clickedButton) {
   });
 }
 
-// Subtle hover effects for buttons via JS since inline hover CSS is limited
+// Subtle hover effects for buttons via JS
 document.querySelectorAll('.tag-btn').forEach(btn => {
   btn.addEventListener('mouseenter', () => {
     if (btn.style.backgroundColor !== 'rgb(0, 118, 129)') { // If not selected
