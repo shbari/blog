@@ -1,0 +1,9 @@
+title: "Shbari's Blog"
+description: "Casual thoughts on hydrology, climate change, tech, and life in Japan."
+
+url: "https://shbari.github.io"
+baseurl: "/blog"
+
+theme: jekyll-theme-cayman
+markdown: kramdown
+highlighter: rouge
