@@ -3,7 +3,7 @@ layout: post
 title: "Testing Hydrology Code and Math Formulas"
 date: 2026-07-28
 categories: [Research, Tech]
-tags: [python, hydrology]
+tags: [python, hydrology, test]
 ---
 
 Hello! This post serves as a test to see how my blog engine renders scientific text, programming code, and math equations.
