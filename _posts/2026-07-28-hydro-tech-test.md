@@ -3,17 +3,13 @@ layout: home
 title: Latest Articles
 ---
 
-<!-- Crucial Mobile Meta Tag to fix small rendering -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <!-- Core CSS Styles for Full Responsiveness & Theme UI -->
 <style>
   .blog-container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 15px; /* Added breathing room for mobile edges */
+    padding: 10px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    box-sizing: border-box;
   }
   .intro-text {
     font-size: 1.15rem;
@@ -38,7 +34,7 @@ title: Latest Articles
   }
   .search-input {
     width: 100%;
-    padding: 14px 16px; /* Slightly taller for easy mobile tapping */
+    padding: 12px 16px;
     font-size: 1rem;
     border: 1px solid #d1d5db;
     border-radius: 8px;
@@ -62,12 +58,12 @@ title: Latest Articles
     margin-bottom: 20px;
   }
   .tag-btn {
-    padding: 10px 18px; /* Bigger touch targets for mobile thumbs */
+    padding: 8px 16px;
     border: 1px solid #e5e7eb;
     background-color: #f9fafb;
     color: #4b5563;
     border-radius: 30px;
-    font-size: 0.95rem; /* Marginally larger for better reading */
+    font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.25s ease;
@@ -82,7 +78,7 @@ title: Latest Articles
     margin: 0;
   }
   .post-item {
-    padding: 22px 0; /* Enhanced spacing */
+    padding: 20px 0;
     border-bottom: 1px solid #f3f4f6;
     transition: transform 0.2s ease;
   }
@@ -101,7 +97,7 @@ title: Latest Articles
     letter-spacing: 0.05em;
   }
   .post-link {
-    font-size: 1.35rem; /* Clean bold title size for mobile/pc */
+    font-size: 1.3rem;
     font-weight: 700;
     color: #111827;
     text-decoration: none;
@@ -119,10 +115,10 @@ title: Latest Articles
     margin-top: 10px;
   }
   .inline-tag {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     background-color: #f3f4f6;
     color: #6b7280;
-    padding: 4px 12px;
+    padding: 3px 10px;
     border-radius: 12px;
     font-weight: 500;
   }
