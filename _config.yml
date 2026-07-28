@@ -7,3 +7,10 @@ baseurl: "/blog"
 theme: jekyll-theme-cayman
 markdown: kramdown
 highlighter: rouge
+# Content Settings
+permalink: /:categories/:title/
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
