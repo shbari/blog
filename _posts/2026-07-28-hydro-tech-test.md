@@ -6,7 +6,6 @@ categories: [Research, Tech]
 tags: [python, hydrology, test]
 ---
 
-<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
