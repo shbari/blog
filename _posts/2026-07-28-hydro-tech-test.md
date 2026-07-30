@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Buying a SIM card in Japan"
-date: 2026-07-28
+date: 2026-07-29
 categories: [Research, Tech]
 tags: [python, hydrology, test]
 ---
