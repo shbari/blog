@@ -1,0 +1,807 @@
+---
+layout: post
+title: "Setting up WSL Ubuntu for RRI model"
+date: 2026-08-25
+categories: [Research, RRI]
+tags: [WSL, Ubuntu, modeling]
+---
+<div class="container">
+
+  <header id="top">
+    <h1>WSL2 + Ubuntu + Fortran + NetCDF</h1>
+    <p>
+      A command-by-command guide for building a scientific computing
+      environment on Windows using WSL2 and Ubuntu.
+    </p>
+  </header>
+
+  <div class="toc">
+    <h2>Table of Contents</h2>
+    <ul>
+      <li><a href="#overview">1. What We Are Building</a></li>
+      <li><a href="#wsl">2. Install WSL2 and Choose a Linux Distribution</a></li>
+      <li><a href="#move">3. Move Ubuntu to Another Drive</a></li>
+      <li><a href="#update">4. Update Ubuntu</a></li>
+      <li><a href="#compiler">5. Install GCC and GFortran</a></li>
+      <li><a href="#hdf5">6. Install HDF5 and NetCDF Libraries</a></li>
+      <li><a href="#netcdf-fortran">7. Build NetCDF-Fortran 4.6.1</a></li>
+      <li><a href="#path">8. Configure the NetCDF Environment</a></li>
+      <li><a href="#tools">9. Install Useful Command-Line Tools</a></li>
+      <li><a href="#fortls">10. Install fortls for VS Code</a></li>
+      <li><a href="#python">11. Install Python Scientific Libraries</a></li>
+      <li><a href="#verify">12. Verify the Installation</a></li>
+      <li><a href="#next">13. What's Next?</a></li>
+    </ul>
+  </div>
+
+  <section id="overview">
+    <h2>1. What We Are Building</h2>
+
+    <p class="lead">
+      This tutorial creates a Linux-based scientific computing environment
+      inside Windows using WSL2.
+    </p>
+
+    <p>
+      The goal is to create a practical environment for scientific
+      programming, especially for Fortran, NetCDF, climate data,
+      numerical models, GIS data, and Python.
+    </p>
+
+    <div class="requirements">
+      <strong>The final environment will contain:</strong>
+      <ul>
+        <li>WSL2</li>
+        <li>Ubuntu</li>
+        <li>GCC</li>
+        <li>GFortran</li>
+        <li>HDF5</li>
+        <li>NetCDF</li>
+        <li>NetCDF-Fortran 4.6.1</li>
+        <li>GDAL</li>
+        <li>fortls</li>
+        <li>Python</li>
+        <li>NumPy</li>
+        <li>pandas</li>
+        <li>xarray</li>
+        <li>Matplotlib</li>
+        <li>Cartopy</li>
+        <li>GeoPandas</li>
+        <li>Rasterio</li>
+        <li>Shapely</li>
+      </ul>
+    </div>
+
+    <div class="note">
+      <strong>Important:</strong>
+      Most commands in this tutorial are executed inside the Ubuntu
+      terminal. WSL management commands are executed from Windows
+      PowerShell.
+    </div>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <section id="wsl">
+    <h2>2. Install WSL2 and Choose a Linux Distribution</h2>
+
+    <p class="lead">
+      WSL2 allows you to run a Linux environment directly inside Windows.
+      For this tutorial, we will use Ubuntu.
+    </p>
+
+    <h3>Step 1 — Open PowerShell as Administrator</h3>
+
+    <p>
+      Open the Windows Start menu and search for
+      <strong>PowerShell</strong>.
+      Right-click PowerShell and select
+      <strong>Run as administrator</strong>.
+    </p>
+
+    <h3>Step 2 — Install WSL</h3>
+
+    <p>Run the following command:</p>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>wsl --install</code></pre>
+    </div>
+
+    <p>
+      By default, WSL installs Ubuntu as the default Linux distribution.
+    </p>
+
+    <h3>Step 3 — See Available Linux Distributions</h3>
+
+    <p>
+      To see the Linux distributions currently available for installation,
+      run:
+    </p>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>wsl.exe --list --online</code></pre>
+    </div>
+
+    <h3>Step 4 — Install a Specific Distribution</h3>
+
+    <p>
+      You can choose a distribution using the
+      <span class="inline-code">-d</span> option:
+    </p>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>wsl.exe --install -d [Distro]</code></pre>
+    </div>
+
+    <p>
+      Replace <span class="inline-code">[Distro]</span> with the name
+      of the distribution you want to install.
+    </p>
+
+    <h4>For example, install Ubuntu:</h4>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>wsl.exe --install -d Ubuntu</code></pre>
+    </div>
+
+    <div class="tip">
+      <strong>Recommendation:</strong>
+      Use Ubuntu for this tutorial. The remaining commands are written
+      for an Ubuntu environment.
+    </div>
+
+    <h3>Step 5 — Restart Windows</h3>
+
+    <p>
+      Restart your computer if Windows asks you to do so.
+    </p>
+
+    <h3>Step 6 — Start Ubuntu</h3>
+
+    <p>
+      After restarting Windows, open Ubuntu from the Start menu.
+    </p>
+
+    <p>
+      The first launch may take a few moments while Ubuntu completes
+      its initial setup.
+    </p>
+
+    <h3>Step 7 — Create Your Linux Username</h3>
+
+    <p>
+      Ubuntu will ask you to create a Linux user account.
+      Enter the username you would like to use.
+    </p>
+
+    <div class="code-wrapper">
+      <pre class="no-copy"><code>Enter new UNIX username: yourname</code></pre>
+    </div>
+
+    <p>
+      Your Linux username does not need to be the same as your
+      Windows username.
+    </p>
+
+    <h3>Step 8 — Create Your Linux Password</h3>
+
+    <p>
+      Ubuntu will then ask you to create a password:
+    </p>
+
+    <div class="code-wrapper">
+      <pre class="no-copy"><code>New password:
+Retype new password:</code></pre>
+    </div>
+
+    <div class="warning">
+      <strong>Important:</strong>
+      When you type your password in the Linux terminal, the characters
+      will not appear on the screen. This is normal. Type your password
+      and press Enter.
+    </div>
+
+    <h3>Step 9 — Check the WSL Installation</h3>
+
+    <p>
+      Open PowerShell and run:
+    </p>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>wsl --list --verbose</code></pre>
+    </div>
+
+    <p>
+      You should see your installed Linux distribution in the list.
+    </p>
+
+    <div class="note">
+      <strong>Check the VERSION column.</strong>
+      Your distribution should show version
+      <span class="inline-code">2</span>.
+    </div>
+
+    <h3>Installing a Distribution Not Listed by WSL</h3>
+
+    <p>
+      WSL can also work with Linux distributions that are not included
+      in the standard online list.
+    </p>
+
+    <p>
+      Advanced users can import a Linux distribution from a TAR archive.
+      Some distributions can also be installed using an
+      <span class="inline-code">.appx</span> package.
+    </p>
+
+    <p>
+      It is also possible to create a custom Linux distribution for WSL.
+    </p>
+
+    <div class="note">
+      <strong>For this tutorial:</strong>
+      You do not need these advanced installation methods.
+      A standard Ubuntu installation is sufficient.
+    </div>
+
+    <h3>Troubleshooting WSL Installation</h3>
+
+    <p>
+      If you encounter an installation problem, consult Microsoft's
+      official WSL troubleshooting documentation for installation issues.
+    </p>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <section id="move">
+    <h2>3. Move Ubuntu to Another Drive</h2>
+
+    <p class="lead">
+      If your Windows system drive is running out of space, you can move
+      your WSL distribution to another drive.
+    </p>
+
+    <div class="warning">
+      <strong>Warning:</strong>
+      The <span class="inline-code">wsl --unregister</span> command
+      is destructive. It removes the existing WSL distribution.
+      Make sure your export completed successfully before using it.
+    </div>
+
+    <h3>Step 1 — Create a Destination Folder</h3>
+
+    <p>Open PowerShell as Administrator:</p>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>mkdir D:\WSLDistros\Ubuntu</code></pre>
+    </div>
+
+    <h3>Step 2 — Export Ubuntu</h3>
+
+    <p>Export Ubuntu to the new drive:</p>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>wsl --export Ubuntu D:\WSLDistros\Ubuntu\ext4.vhdx --format vhd</code></pre>
+    </div>
+
+    <h3>Step 3 — Verify the Export</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>dir D:\WSLDistros\Ubuntu</code></pre>
+    </div>
+
+    <div class="danger">
+      <strong>Do not continue if the export failed.</strong>
+      Make sure the VHDX file exists before unregistering Ubuntu.
+    </div>
+
+    <h3>Step 4 — Unregister the Original Ubuntu</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>wsl --unregister Ubuntu</code></pre>
+    </div>
+
+    <h3>Step 5 — Import Ubuntu at the New Location</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>wsl --import-in-place Ubuntu D:\WSLDistros\Ubuntu\ext4.vhdx</code></pre>
+    </div>
+
+    <h3>Step 6 — Start Ubuntu</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>wsl -d Ubuntu</code></pre>
+    </div>
+
+    <div class="tip">
+      <strong>Done!</strong>
+      Ubuntu is now running from its new storage location.
+    </div>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <section id="update">
+    <h2>4. Update Ubuntu</h2>
+
+    <p>
+      From this point onward, commands are executed inside the
+      Ubuntu terminal.
+    </p>
+
+    <h3>Update Package Information</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt update</code></pre>
+    </div>
+
+    <h3>Upgrade Installed Packages</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt upgrade -y</code></pre>
+    </div>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <section id="compiler">
+    <h2>5. Install GCC and GFortran</h2>
+
+    <p>
+      GCC is the GNU Compiler Collection.
+      GFortran is the GNU Fortran compiler.
+    </p>
+
+    <h3>Install GCC</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y gcc</code></pre>
+    </div>
+
+    <h3>Install GFortran</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y gfortran</code></pre>
+    </div>
+
+    <h3>Install Build Tools</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y build-essential</code></pre>
+    </div>
+
+    <h3>Check GFortran</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>gfortran --version</code></pre>
+    </div>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <section id="hdf5">
+    <h2>6. Install HDF5 and NetCDF Libraries</h2>
+
+    <p>
+      NetCDF is widely used for storing scientific datasets.
+      HDF5 is an important underlying data format used by NetCDF-4.
+    </p>
+
+    <h3>Install HDF5 Packages</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y hdf5-tools hdf5-helpers libhdf5-dev libhdf5-doc libhdf5-serial-dev</code></pre>
+    </div>
+
+    <h3>Install NetCDF Development Libraries</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y libnetcdf-dev</code></pre>
+    </div>
+
+    <h3>Check NetCDF Configuration</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>nc-config --all</code></pre>
+    </div>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <section id="netcdf-fortran">
+    <h2>7. Build NetCDF-Fortran 4.6.1</h2>
+
+    <p>
+      NetCDF-Fortran provides the Fortran interface to NetCDF.
+      We will download the source code, compile it with GFortran,
+      test it, and install it.
+    </p>
+
+    <h3>Step 1 — Create a Downloads Directory</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>mkdir -p ~/Downloads</code></pre>
+    </div>
+
+    <h3>Step 2 — Enter the Downloads Directory</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>cd ~/Downloads</code></pre>
+    </div>
+
+    <h3>Step 3 — Download NetCDF-Fortran 4.6.1</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>wget https://downloads.unidata.ucar.edu/netcdf-fortran/4.6.1/netcdf-fortran-4.6.1.tar.gz</code></pre>
+    </div>
+
+    <h3>Step 4 — Extract the Archive</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>tar xf netcdf-fortran-4.6.1.tar.gz</code></pre>
+    </div>
+
+    <h3>Step 5 — Enter the Source Directory</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>cd netcdf-fortran-4.6.1</code></pre>
+    </div>
+
+    <h3>Step 6 — Configure the Build</h3>
+
+    <p>
+      We will install NetCDF-Fortran under
+      <span class="inline-code">/usr/local/netcdf-gfortran/4.6.1</span>.
+    </p>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>./configure --prefix=/usr/local/netcdf-gfortran/4.6.1 --enable-large-file-tests --with-pic</code></pre>
+    </div>
+
+    <h3>Step 7 — Compile NetCDF-Fortran</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>make</code></pre>
+    </div>
+
+    <h3>Step 8 — Run the Test Suite</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>make check</code></pre>
+    </div>
+
+    <div class="tip">
+      <strong>Tip:</strong>
+      If the tests finish successfully, this is a good indication that
+      NetCDF-Fortran was compiled correctly.
+    </div>
+
+    <h3>Step 9 — Install NetCDF-Fortran</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo make install</code></pre>
+    </div>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <section id="path">
+    <h2>8. Configure the NetCDF Environment</h2>
+
+    <p>
+      Linux needs to know where the NetCDF-Fortran executable files
+      and shared libraries are located.
+    </p>
+
+    <h3>Add NetCDF to PATH</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>echo '' >> ~/.bashrc
+echo '# NetCDF-Fortran using GFortran' >> ~/.bashrc
+echo 'export PATH="/usr/local/netcdf-gfortran/4.6.1/bin:$PATH"' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH="/usr/local/netcdf-gfortran/4.6.1/lib:$LD_LIBRARY_PATH"' >> ~/.bashrc</code></pre>
+    </div>
+
+    <h3>Reload Your Shell Configuration</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>source ~/.bashrc</code></pre>
+    </div>
+
+    <h3>Check NetCDF-Fortran</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>nf-config --all</code></pre>
+    </div>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <section id="tools">
+    <h2>9. Install Useful Command-Line Tools</h2>
+
+    <p>
+      These utilities are useful when working with scientific data,
+      GIS files, shell scripts, downloads, and text files.
+    </p>
+
+    <h3>Install NetCDF Command-Line Tools</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y netcdf-bin</code></pre>
+    </div>
+
+    <h3>Install GDAL</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y gdal-bin</code></pre>
+    </div>
+
+    <h3>Install bc</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y bc</code></pre>
+    </div>
+
+    <h3>Install unar</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y unar</code></pre>
+    </div>
+
+    <h3>Install curl</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y curl</code></pre>
+    </div>
+
+    <h3>Install sed</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y sed</code></pre>
+    </div>
+
+    <h3>Install nkf</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y nkf</code></pre>
+    </div>
+
+    <h3>Or Install All Tools Together</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y netcdf-bin gdal-bin bc unar curl sed nkf</code></pre>
+    </div>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <section id="fortls">
+    <h2>10. Install fortls for VS Code</h2>
+
+    <p>
+      fortls is a Fortran Language Server.
+      It provides features such as code completion, symbol navigation,
+      and diagnostics for Fortran development.
+    </p>
+
+    <h3>Install Python and pip</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>sudo apt install -y python3 python3-pip</code></pre>
+    </div>
+
+    <h3>Install fortls</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>python3 -m pip install fortls</code></pre>
+    </div>
+
+    <h3>Check fortls</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>fortls --version</code></pre>
+    </div>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <section id="python">
+    <h2>11. Install Python Scientific Libraries</h2>
+
+    <p>
+      Python is useful for analyzing NetCDF files, creating plots,
+      manipulating tabular data, and working with geospatial datasets.
+    </p>
+
+    <h3>Install the Scientific Python Packages</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>python3 -m pip install xarray numpy pandas matplotlib cartopy geopandas rasterio shapely</code></pre>
+    </div>
+
+    <h3>What Do These Packages Do?</h3>
+
+    <ul>
+      <li><strong>NumPy</strong> — numerical computing and arrays</li>
+      <li><strong>pandas</strong> — tabular data analysis</li>
+      <li><strong>xarray</strong> — multidimensional scientific datasets</li>
+      <li><strong>Matplotlib</strong> — plotting and visualization</li>
+      <li><strong>Cartopy</strong> — geographic and map visualization</li>
+      <li><strong>GeoPandas</strong> — geospatial vector data</li>
+      <li><strong>Rasterio</strong> — raster and geospatial data</li>
+      <li><strong>Shapely</strong> — geometric operations</li>
+    </ul>
+
+    <div class="warning">
+      <strong>Note about modern Ubuntu:</strong>
+      Some newer Ubuntu versions prevent direct installation of Python
+      packages into the system Python environment. If you encounter an
+      <span class="inline-code">externally-managed-environment</span>
+      error, use a Python virtual environment instead.
+    </div>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <section id="verify">
+    <h2>12. Verify the Installation</h2>
+
+    <p>
+      At this point, verify that the main components are available.
+    </p>
+
+    <h3>Check GCC</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>gcc --version</code></pre>
+    </div>
+
+    <h3>Check GFortran</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>gfortran --version</code></pre>
+    </div>
+
+    <h3>Check NetCDF C</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>nc-config --all</code></pre>
+    </div>
+
+    <h3>Check NetCDF-Fortran</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>nf-config --all</code></pre>
+    </div>
+
+    <h3>Check Python</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>python3 --version</code></pre>
+    </div>
+
+    <h3>Check Python Packages</h3>
+
+    <div class="code-wrapper">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>python3 -c "import numpy, pandas, xarray, matplotlib, cartopy, geopandas, rasterio, shapely; print('All Python packages imported successfully.')"</code></pre>
+    </div>
+
+    <div class="tip">
+      <strong>Success!</strong>
+      If the commands above complete without errors, your basic scientific
+      computing environment is ready.
+    </div>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <section id="next">
+    <h2>13. What's Next?</h2>
+
+    <p>
+      Your Windows computer now has a Linux-based scientific computing
+      environment through WSL2.
+    </p>
+
+    <p>A typical workflow might look like this:</p>
+
+    <ol>
+      <li>Write and compile Fortran programs with GFortran.</li>
+      <li>Read and write NetCDF files using NetCDF-Fortran.</li>
+      <li>Process NetCDF data using Python and xarray.</li>
+      <li>Create scientific plots with Matplotlib.</li>
+      <li>Visualize geographic data with Cartopy.</li>
+      <li>Process GIS data using GDAL, GeoPandas, Rasterio, and Shapely.</li>
+      <li>Use VS Code as your development environment.</li>
+    </ol>
+
+    <div class="note">
+      <strong>Recommended next step:</strong>
+      Create a small test Fortran program that links against
+      NetCDF-Fortran. This will confirm that the compiler, NetCDF libraries,
+      include files, and linker settings are all working together.
+    </div>
+
+    <a class="back-to-top" href="#top">↑ Back to top</a>
+  </section>
+
+  <footer>
+    <p><strong>WSL2 + Ubuntu + Fortran + NetCDF Setup Guide</strong></p>
+    <p>A practical command-by-command reference for scientific computing.</p>
+  </footer>
+
+</div>
+
+<script>
+  function copyCode(button) {
+    const code = button.parentElement.querySelector("code").innerText;
+
+    navigator.clipboard.writeText(code).then(function() {
+      const originalText = button.innerText;
+      button.innerText = "Copied!";
+
+      setTimeout(function() {
+        button.innerText = originalText;
+      }, 1500);
+
+    }).catch(function() {
+      button.innerText = "Failed";
+
+      setTimeout(function() {
+        button.innerText = "Copy";
+      }, 1500);
+    });
+  }
+</script>
