@@ -284,10 +284,10 @@ tags: [WSL, Ubuntu, modeling]
 <div class="container">
 
   <header id="top">
-    <h1>WSL2 + Ubuntu + Fortran + NetCDF</h1>
+    <h1>WSL2 + Ubuntu Setup Guide for RRI Model</h1>
     <p>
       A command-by-command guide for building a scientific computing
-      environment on Windows using WSL2 and Ubuntu.
+      environment for RRI (Rainfall-Runoff-Inundation) model on Windows using WSL2 and Ubuntu.
     </p>
   </header>
 
@@ -303,10 +303,9 @@ tags: [WSL, Ubuntu, modeling]
       <li><a href="#netcdf-fortran">7. Build NetCDF-Fortran 4.6.1</a></li>
       <li><a href="#path">8. Configure the NetCDF Environment</a></li>
       <li><a href="#tools">9. Install Useful Command-Line Tools</a></li>
-      <li><a href="#fortls">10. Install fortls for VS Code</a></li>
-      <li><a href="#python">11. Install Python Scientific Libraries</a></li>
-      <li><a href="#verify">12. Verify the Installation</a></li>
-      <li><a href="#next">13. What's Next?</a></li>
+      <li><a href="#fortls">10. Verify the Installation</a></li>
+      <li><a href="#python">11. Install Miniforge and Python Scientific Libraries</a></li>
+      <li><a href="#verify">12. Optional — Install fortls for VS Code</a></li>
     </ul>
   </div>
 
@@ -319,34 +318,9 @@ tags: [WSL, Ubuntu, modeling]
     </p>
 
     <p>
-      The goal is to create a practical environment for scientific
-      programming, especially for Fortran, NetCDF, climate data,
-      numerical models, GIS data, and Python.
+      The goal is to create a practical environment for running RRI model using CUI. 
+      This is also useful for other scientific computing tasks especilly in climate change and hydrology.
     </p>
-
-    <div class="requirements">
-      <strong>The final environment will contain:</strong>
-      <ul>
-        <li>WSL2</li>
-        <li>Ubuntu</li>
-        <li>GCC</li>
-        <li>GFortran</li>
-        <li>HDF5</li>
-        <li>NetCDF</li>
-        <li>NetCDF-Fortran 4.6.1</li>
-        <li>GDAL</li>
-        <li>fortls</li>
-        <li>Python</li>
-        <li>NumPy</li>
-        <li>pandas</li>
-        <li>xarray</li>
-        <li>Matplotlib</li>
-        <li>Cartopy</li>
-        <li>GeoPandas</li>
-        <li>Rasterio</li>
-        <li>Shapely</li>
-      </ul>
-    </div>
 
     <div class="note">
       <strong>Important:</strong>
@@ -385,7 +359,8 @@ tags: [WSL, Ubuntu, modeling]
     </div>
 
     <p>
-      By default, WSL installs Ubuntu as the default Linux distribution.
+      By default, WSL installs Ubuntu as the default Linux distribution. For RRI model, I recommend <strong>Ubuntu-22.04</strong> since compatibility is already tested.
+
     </p>
 
     <h3>Step 3 — See Available Linux Distributions</h3>
@@ -417,17 +392,16 @@ tags: [WSL, Ubuntu, modeling]
       of the distribution you want to install.
     </p>
 
-    <h4>For example, install Ubuntu:</h4>
+    <h4>For example, to install Ubuntu-22.04:</h4>
 
     <div class="code-wrapper">
       <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>wsl.exe --install -d Ubuntu</code></pre>
+      <pre><code>wsl.exe --install -d Ubuntu-22.04</code></pre>
     </div>
 
     <div class="tip">
-      <strong>Recommendation:</strong>
-      Use Ubuntu for this tutorial. The remaining commands are written
-      for an Ubuntu environment.
+      <strong>Important notice:</strong>
+      The remaining commands [starting from step 7] are written for an Ubuntu environment. 
     </div>
 
     <h3>Step 5 — Restart Windows</h3>
@@ -466,7 +440,8 @@ tags: [WSL, Ubuntu, modeling]
     <h3>Step 8 — Create Your Linux Password</h3>
 
     <p>
-      Ubuntu will then ask you to create a password:
+      Ubuntu will then ask you to create a password. 
+      Please remember this password, as you will need it in the future to run commands with administrative privileges.
     </p>
 
     <div class="code-wrapper">
@@ -550,13 +525,13 @@ Retype new password:</code></pre>
       Make sure your export completed successfully before using it.
     </div>
 
-    <h3>Step 1 — Create a Destination Folder</h3>
+    <h3>Step 1 — Create a Destination Folder. We will use 'D' drive as an example:</h3>
 
     <p>Open PowerShell as Administrator:</p>
 
     <div class="code-wrapper">
       <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>mkdir D:\WSLDistros\Ubuntu</code></pre>
+      <pre><code>mkdir D:\WSLDistros</code></pre>
     </div>
 
     <h3>Step 2 — Export Ubuntu</h3>
@@ -565,14 +540,14 @@ Retype new password:</code></pre>
 
     <div class="code-wrapper">
       <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>wsl --export Ubuntu D:\WSLDistros\Ubuntu\ext4.vhdx --format vhd</code></pre>
+      <pre><code>wsl --export Ubuntu D:\WSLDistros\ext4.vhdx --format vhd</code></pre>
     </div>
 
     <h3>Step 3 — Verify the Export</h3>
 
     <div class="code-wrapper">
       <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>dir D:\WSLDistros\Ubuntu</code></pre>
+      <pre><code>dir D:\WSLDistros</code></pre>
     </div>
 
     <div class="danger">
@@ -591,7 +566,7 @@ Retype new password:</code></pre>
 
     <div class="code-wrapper">
       <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>wsl --import-in-place Ubuntu D:\WSLDistros\Ubuntu\ext4.vhdx</code></pre>
+      <pre><code>wsl --import-in-place Ubuntu D:\WSLDistros\ext4.vhdx</code></pre>
     </div>
 
     <h3>Step 6 — Start Ubuntu</h3>
@@ -603,7 +578,7 @@ Retype new password:</code></pre>
 
     <div class="tip">
       <strong>Done!</strong>
-      Ubuntu is now running from its new storage location.
+      Ubuntu is now running from its new storage location. You can also run Ubuntu from the Start menu as before.
     </div>
 
     <a class="back-to-top" href="#top">↑ Back to top</a>
@@ -614,14 +589,14 @@ Retype new password:</code></pre>
 
     <p>
       From this point onward, commands are executed inside the
-      Ubuntu terminal.
+      Ubuntu terminal. For this open Ubuntu from the Start menu or run <span class="inline-code">wsl</span> in PowerShell.
     </p>
 
     <h3>Update Package Information</h3>
 
     <div class="code-wrapper">
       <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>sudo apt update</code></pre>
+      <pre><code>sudo apt update -y</code></pre>
     </div>
 
     <h3>Upgrade Installed Packages</h3>
@@ -699,7 +674,7 @@ Retype new password:</code></pre>
 
     <div class="code-wrapper">
       <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>nc-config --all</code></pre>
+      <pre><code>nc-config -all</code></pre>
     </div>
 
     <a class="back-to-top" href="#top">↑ Back to top</a>
@@ -777,7 +752,7 @@ Retype new password:</code></pre>
 
     <div class="tip">
       <strong>Tip:</strong>
-      If the tests finish successfully, this is a good indication that
+      If the test finish successfully, this is a good indication that
       NetCDF-Fortran was compiled correctly.
     </div>
 
@@ -893,80 +868,8 @@ echo 'export LD_LIBRARY_PATH="/usr/local/netcdf-gfortran/4.6.1/lib:$LD_LIBRARY_P
     <a class="back-to-top" href="#top">↑ Back to top</a>
   </section>
 
-  <section id="fortls">
-    <h2>10. Install fortls for VS Code</h2>
-
-    <p>
-      fortls is a Fortran Language Server.
-      It provides features such as code completion, symbol navigation,
-      and diagnostics for Fortran development.
-    </p>
-
-    <h3>Install Python and pip</h3>
-
-    <div class="code-wrapper">
-      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>sudo apt install -y python3 python3-pip</code></pre>
-    </div>
-
-    <h3>Install fortls</h3>
-
-    <div class="code-wrapper">
-      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>python3 -m pip install fortls</code></pre>
-    </div>
-
-    <h3>Check fortls</h3>
-
-    <div class="code-wrapper">
-      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>fortls --version</code></pre>
-    </div>
-
-    <a class="back-to-top" href="#top">↑ Back to top</a>
-  </section>
-
-  <section id="python">
-    <h2>11. Install Python Scientific Libraries</h2>
-
-    <p>
-      Python is useful for analyzing NetCDF files, creating plots,
-      manipulating tabular data, and working with geospatial datasets.
-    </p>
-
-    <h3>Install the Scientific Python Packages</h3>
-
-    <div class="code-wrapper">
-      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>python3 -m pip install xarray numpy pandas matplotlib cartopy geopandas rasterio shapely</code></pre>
-    </div>
-
-    <h3>What Do These Packages Do?</h3>
-
-    <ul>
-      <li><strong>NumPy</strong> — numerical computing and arrays</li>
-      <li><strong>pandas</strong> — tabular data analysis</li>
-      <li><strong>xarray</strong> — multidimensional scientific datasets</li>
-      <li><strong>Matplotlib</strong> — plotting and visualization</li>
-      <li><strong>Cartopy</strong> — geographic and map visualization</li>
-      <li><strong>GeoPandas</strong> — geospatial vector data</li>
-      <li><strong>Rasterio</strong> — raster and geospatial data</li>
-      <li><strong>Shapely</strong> — geometric operations</li>
-    </ul>
-
-    <div class="warning">
-      <strong>Note about modern Ubuntu:</strong>
-      Some newer Ubuntu versions prevent direct installation of Python
-      packages into the system Python environment. If you encounter an
-      <span class="inline-code">externally-managed-environment</span>
-      error, use a Python virtual environment instead.
-    </div>
-
-    <a class="back-to-top" href="#top">↑ Back to top</a>
-  </section>
-
   <section id="verify">
-    <h2>12. Verify the Installation</h2>
+    <h2>10. Verify the Installation</h2>
 
     <p>
       At this point, verify that the main components are available.
@@ -1000,62 +903,222 @@ echo 'export LD_LIBRARY_PATH="/usr/local/netcdf-gfortran/4.6.1/lib:$LD_LIBRARY_P
       <pre><code>nf-config --all</code></pre>
     </div>
 
-    <h3>Check Python</h3>
-
-    <div class="code-wrapper">
-      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>python3 --version</code></pre>
-    </div>
-
-    <h3>Check Python Packages</h3>
-
-    <div class="code-wrapper">
-      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>python3 -c "import numpy, pandas, xarray, matplotlib, cartopy, geopandas, rasterio, shapely; print('All Python packages imported successfully.')"</code></pre>
-    </div>
-
     <div class="tip">
       <strong>Success!</strong>
       If the commands above complete without errors, your basic scientific
-      computing environment is ready.
+      computing environment for RRI model simulation should be ready.
     </div>
 
     <a class="back-to-top" href="#top">↑ Back to top</a>
   </section>
 
-  <section id="next">
-    <h2>13. What's Next?</h2>
 
-    <p>
-      Your Windows computer now has a Linux-based scientific computing
-      environment through WSL2.
-    </p>
+  <section id="python">
+  <h2>11. Install Miniforge and Python Scientific Libraries</h2>
 
-    <p>A typical workflow might look like this:</p>
+  <p class="lead">
+    Miniforge is optional for running the RRI model itself.
+    However, it is recommended if you want to use Python for
+    NetCDF analysis, visualization, and GIS processing.
+  </p>
 
-    <ol>
-      <li>Write and compile Fortran programs with GFortran.</li>
-      <li>Read and write NetCDF files using NetCDF-Fortran.</li>
-      <li>Process NetCDF data using Python and xarray.</li>
-      <li>Create scientific plots with Matplotlib.</li>
-      <li>Visualize geographic data with Cartopy.</li>
-      <li>Process GIS data using GDAL, GeoPandas, Rasterio, and Shapely.</li>
-      <li>Use VS Code as your development environment.</li>
-    </ol>
+  <div class="note">
+    <strong>Important:</strong>
+    Miniforge is not required to compile or run RRI.
+    The RRI compilation environment is provided by GFortran,
+    HDF5, NetCDF-C, and NetCDF-Fortran installed in the previous steps.
+  </div>
 
-    <div class="note">
-      <strong>Recommended next step:</strong>
-      Create a small test Fortran program that links against
-      NetCDF-Fortran. This will confirm that the compiler, NetCDF libraries,
-      include files, and linker settings are all working together.
-    </div>
+  <p>
+    Miniforge provides a convenient way to create isolated Python
+    environments and install scientific Python packages from conda-forge.
+    This avoids modifying Ubuntu's system Python environment.
+  </p>
 
-    <a class="back-to-top" href="#top">↑ Back to top</a>
-  </section>
+  <h3>Step 1 — Download Miniforge</h3>
+
+<p>
+  Download the latest Miniforge installer for Linux from the
+  official conda-forge website.
+  For most WSL2 Ubuntu installations, use the
+  <strong>Linux x86_64 (amd64)</strong> installer.
+</p>
+
+<p>
+  You can download it directly from the Ubuntu terminal:
+</p>
+
+<div class="code-wrapper">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code>curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh"</code></pre>
+</div>
+
+<p>
+  Verify that the installer was downloaded:
+</p>
+
+<div class="code-wrapper">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code>ls -lh Miniforge3-Linux-x86_64.sh</code></pre>
+</div>
+
+  <h3>Step 2 — Install Miniforge</h3>
+
+<p>
+  Make the installer executable:
+</p>
+
+<div class="code-wrapper">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code>chmod +x Miniforge3-Linux-x86_64.sh</code></pre>
+</div>
+
+<p>
+  Run the installer:
+</p>
+
+<div class="code-wrapper">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code>./Miniforge3-Linux-x86_64.sh</code></pre>
+</div>
+
+  <p>
+    Follow the instructions displayed by the installer.
+    When asked whether to initialize Miniforge, choose
+    <strong>yes</strong>.
+  </p>
+
+  <h3>Step 3 — Reload the Shell</h3>
+
+  <div class="code-wrapper">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre><code>source ~/.bashrc</code></pre>
+  </div>
+
+  <h3>Step 4 — Check Conda</h3>
+
+  <div class="code-wrapper">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre><code>conda --version</code></pre>
+  </div>
+
+  <div class="tip">
+    <strong>Tip:</strong>
+    If <span class="inline-code">conda</span> is not found, close and
+    reopen the Ubuntu terminal, then run
+    <span class="inline-code">conda --version</span> again.
+  </div>
+
+  <h3>Step 5 — Create an RRI Python Environment</h3>
+
+  <p>
+    Create a separate environment for the Python tools used with RRI:
+  </p>
+
+  <div class="code-wrapper">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre><code>conda create -n rri python=3.12</code></pre>
+  </div>
+
+  <h3>Step 6 — Activate the RRI Python Environment</h3>
+
+  <div class="code-wrapper">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre><code>conda activate rri</code></pre>
+  </div>
+
+  <h3>Step 7 — Install Scientific Python Packages</h3>
+
+  <p>
+    Install the main packages used for scientific analysis,
+    NetCDF processing, visualization, and GIS:
+  </p>
+
+  <div class="code-wrapper">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre><code>conda install -c conda-forge numpy pandas xarray matplotlib cartopy geopandas rasterio shapely</code></pre>
+  </div>
+
+  <h3>Step 8 — Check Python</h3>
+
+  <div class="code-wrapper">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre><code>python --version</code></pre>
+  </div>
+
+  <h3>Step 9 — Test the Python Packages</h3>
+
+  <div class="code-wrapper">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre><code>python -c "import numpy, pandas, xarray, matplotlib, cartopy, geopandas, rasterio, shapely; print('All Python packages imported successfully.')"</code></pre>
+  </div>
+
+  <div class="tip">
+    <strong>Tip:</strong>
+    Whenever you want to use these Python packages, activate the
+    environment with <span class="inline-code">conda activate rri</span>.
+  </div>
+
+  <a class="back-to-top" href="#top">↑ Back to top</a>
+</section>
+
+
+<section id="fortls">
+  <h2>12. Optional — Install fortls for VS Code</h2>
+
+  <p>
+    <span class="inline-code">fortls</span> is a Fortran Language Server.
+    It is not required to compile or run RRI.
+    If you use VS Code for Fortran development, fortls can provide
+    features such as code completion, symbol navigation, hover information,
+    and diagnostics.
+  </p>
+
+  <div class="note">
+    <strong>Optional:</strong>
+    Skip this section if you only need to compile and run RRI.
+  </div>
+
+  <h3>Install fortls in the RRI Python Environment</h3>
+
+  <p>
+    First activate the Miniforge environment created in the previous section:
+  </p>
+
+  <div class="code-wrapper">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre><code>conda activate rri</code></pre>
+  </div>
+
+  <p>
+    Install fortls:
+  </p>
+
+  <div class="code-wrapper">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre><code>python -m pip install fortls</code></pre>
+  </div>
+
+  <h3>Check fortls</h3>
+
+  <div class="code-wrapper">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre><code>fortls --version</code></pre>
+  </div>
+
+  <div class="note">
+    <strong>VS Code:</strong>
+    If VS Code cannot find fortls automatically, configure the
+    Fortran language server to use the executable located in the
+    <span class="inline-code">rri</span> environment.
+  </div>
+
+  <a class="back-to-top" href="#top">↑ Back to top</a>
+</section>
 
   <footer>
     <p><strong>WSL2 + Ubuntu + Fortran + NetCDF Setup Guide</strong></p>
-    <p>A practical command-by-command reference for scientific computing.</p>
+    <p>Sheikh Hefzul Bari.</p>
   </footer>
 
 </div>
