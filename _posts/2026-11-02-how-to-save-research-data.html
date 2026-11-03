@@ -1,0 +1,613 @@
+---
+layout: post
+title: "How to structure research workspaces that withstand peer review"
+date: 2026-10-11
+categories: [Research, Data Management]
+tags: [reproducibility, workspace organization]
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The "Future-You" Protocol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-subtle: #eff6ff;
+      --code-bg: #0b132b;
+      --code-header: #1c2541;
+      --border-color: #e2e8f0;
+      --quote-bg: #f0f9ff;
+      --quote-border: #0284c7;
+      --accent-color: #38bdf8;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.8;
+      margin: 0;
+      padding: 30px 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 840px;
+      margin: 20px auto;
+      background: var(--card-bg);
+      padding: 56px 64px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+      border: 1px solid var(--border-color);
+    }
+
+    h1 {
+      font-size: 2.35rem;
+      line-height: 1.25;
+      color: var(--text-main);
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      color: #1e293b;
+      margin-top: 48px;
+      margin-bottom: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 1.2em;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      color: #334155;
+      margin-top: 28px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    h4 {
+      font-size: 1.05rem;
+      color: #475569;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    p {
+      margin-bottom: 22px;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    ul, ol {
+      margin-bottom: 28px;
+      padding-left: 24px;
+      color: var(--text-muted);
+    }
+
+    li {
+      margin-bottom: 10px;
+      font-size: 1.02rem;
+    }
+
+    li::marker {
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    blockquote {
+      background-color: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      margin: 28px 0;
+      padding: 18px 24px;
+      border-radius: 0 12px 12px 0;
+      color: #0369a1;
+      font-size: 1.02rem;
+    }
+
+    blockquote p {
+      margin: 0;
+      color: inherit;
+    }
+
+    /* Code Block Styling */
+    .code-container {
+      position: relative;
+      margin: 28px 0;
+      background-color: var(--code-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #1e293b;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--code-header);
+      padding: 10px 20px;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      font-family: 'Fira Code', monospace;
+      font-weight: 500;
+      border-bottom: 1px solid #2d3748;
+    }
+
+    .code-lang {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .code-lang::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--accent-color);
+    }
+
+    .copy-btn {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #f1f5f9;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(4px);
+    }
+
+    .copy-btn:hover {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .copy-btn.copied {
+      background-color: #10b981;
+      border-color: #10b981;
+      color: #ffffff;
+    }
+
+    pre {
+      margin: 0;
+      padding: 24px;
+      overflow-x: auto;
+      font-family: 'Fira Code', Consolas, Monaco, monospace;
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: #f1f5f9;
+    }
+
+    code {
+      font-family: 'Fira Code', Consolas, Monaco, monospace;
+    }
+
+    p code, li code {
+      background-color: var(--primary-subtle);
+      color: var(--primary);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      border: 1px solid #dbeafe;
+      font-weight: 500;
+    }
+
+    .syntax-comment { color: #64748b; font-style: italic; }
+    .syntax-keyword { color: #f472b6; font-weight: 500; }
+    .syntax-string { color: #a5f3fc; }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 12px;
+      }
+      .container {
+        padding: 32px 24px;
+        border-radius: 12px;
+      }
+      h1 {
+        font-size: 1.85rem;
+      }
+      h2 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>The "Future-You" Protocol: How to structure research workspaces that withstand peer review</h1>
+
+  <p>Picture this: It is six months after you finished analyzing your research data. A peer reviewer responds to your submission with a standard request: <em>“Please re-run the primary statistical model using the updated baseline data.”</em></p>
+
+  <p>You open your project folder, and your heart sinks.</p>
+
+  <p>You are greeted by <code>script_final_v2_FIXED.py</code>, <code>data_cleaned_FINAL(1).csv</code>, and an unorganized collection of unlabeled figures saved directly to your desktop. You spend the next three days deciphering your own code, trying to figure out which exact dataset produced Figure 3, and attempting to recreate an environment that no longer executes cleanly.</p>
+
+  <p>If this scenario sounds familiar, you are not alone. Academic training focuses heavily on domain methodology and analysis, but often overlooks <strong>workspace architecture</strong>.</p>
+
+  <p>Below is an example of a standardized, production-ready blueprint for organizing research workspaces. It incorporates modern computational standards, reproducible workflows, and an automated Python setup script to keep your projects organized, searchable, and ready for peer review. But keep in mind that this is just one approach — the key is to find a system that works for you and meets standards in your field.</p>
+
+  <h2>1. Adopt a Standardized Naming Convention</h2>
+
+  <p>Directory chaos starts at the root level. Descriptive folder names like <code>paper_draft</code> or <code>water_data</code> quickly become unmanageable as your project history grows.</p>
+
+  <p>Adopt a single, predictable structure for top-level research directory names:</p>
+
+  <p><strong><code>[Year]_[Type]_[Where]_[Topic]</code></strong></p>
+
+  <ul>
+    <li><strong>Year:</strong> Target or final publication year if this is a journal article or project starting year (e.g., <code>2026</code>). You should keep a note about it in the metadata file.</li>
+    <li><strong>Type:</strong> Outlet category — <code>J</code> (Journal Article), <code>C</code> (Conference Paper), <code>B</code> (Book Chapter).</li>
+    <li><strong>Where:</strong> Study area, jurisdiction, or catchment (e.g., <code>Padma</code>, <code>Global</code>, <code>LabA</code>).</li>
+    <li><strong>Topic:</strong> Primary model, phenomenon, or research topic (e.g., <code>Sediment_Hysteresis</code>).</li>
+  </ul>
+
+  <blockquote>
+    <p><strong>Example:</strong> <code>2026_J_Padma_Sediment_Hysteresis</code></p>
+  </blockquote>
+
+  <p>This metadata-rich naming convention makes your workspace instantly queryable across file systems and terminal interfaces, regardless of operating system.</p>
+
+  <h2>2. Enforce Strict Separation of Concerns</h2>
+
+  <p>The foundational rule of reproducible research is simple: <strong>Raw data is immutable.</strong></p>
+
+  <p>Your workspace must enforce a strict separation between input datasets, analytical logic, and output artifacts:</p>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span class="code-lang">workspace-structure.txt</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy Tree</button>
+    </div>
+    <pre><code>2026_J_Padma_Sediment_Hysteresis/
+├── admin/               <span class="syntax-comment"># Scope, data inventory, metadata, and meeting logs</span>
+│   ├── meeting_notes/
+│   ├── data_inventory.csv
+│   ├── metadata.md
+│   └── project_scope.md
+├── data/                <span class="syntax-comment"># Immutable raw data and derived outputs (git-ignored)</span>
+│   ├── raw/             <span class="syntax-comment"># Read-only original datasets</span>
+│   └── processed/       <span class="syntax-comment"># Cleaned, transformed output datasets</span>
+├── src/                 <span class="syntax-comment"># Reusable scripts, functions, and computational notebooks</span>
+├── results/             <span class="syntax-comment"># Generated output artifacts</span>
+│   ├── figures/         <span class="syntax-comment"># Publication-ready plots and visual assets</span>
+│   └── tables/          <span class="syntax-comment"># Exported summary tables and statistical outputs</span>
+├── manuscript/          <span class="syntax-comment"># LaTeX/Word drafts, references (.bib), and review responses</span>
+├── .gitignore           <span class="syntax-comment"># Prevents committing large datasets and binary files</span>
+├── environment.yml      <span class="syntax-comment"># Conda environment specification</span>
+├── requirements.txt     <span class="syntax-comment"># Pip package requirements</span>
+└── README.md            <span class="syntax-comment"># Comprehensive project index and environment instructions</span></code></pre>
+  </div>
+
+  <h3>Key Architectural Rules</h3>
+  <ol>
+    <li><strong><code>data/raw/</code> is read-only:</strong> Treat raw files as immutable inputs. If a script transforms your data, write the output directly to <code>data/processed/</code>.</li>
+    <li><strong><code>results/</code> should be disposable:</strong> In a fully reproducible pipeline, you should be able to delete the entire <code>results/</code> folder, execute your scripts from <code>src/</code>, and regenerate every figure and table identically. However, you may post-process, especially figures for publication purposes (e.g., adjusting colors, adding labels in Inkscape). In such cases, save them separately and keep notes.</li>
+    <li><strong>Discipline-Agnostic Structure:</strong> While this example highlights computational hydrology, the principle applies universally:
+      <ul>
+        <li><strong>Wet labs:</strong> Store raw instrument logs in <code>data/raw/</code> and processed assays in <code>data/processed/</code>.</li>
+        <li><strong>Qualitative research:</strong> Place audio transcripts or raw interview logs in <code>data/raw/</code> and coded outputs in <code>data/processed/</code>.</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h2>3. Treat Metadata as First-Class Citizens</h2>
+
+  <p>A frequent failure point in collaborative research is undocumented data context. Months after data collection, details like unit metrics, spatial projections, or variable shorthands are easily forgotten.</p>
+
+  <p>Maintain three core management files inside the <code>admin/</code> directory:</p>
+
+  <ul>
+    <li><strong><code>project_scope.md</code>:</strong> Documents core research questions, formal hypotheses, and active milestone deliverables.</li>
+    <li><strong><code>data_inventory.csv</code>:</strong> Logs data provenance, including source agencies, acquisition URLs, temporal ranges, and licensing constraints.</li>
+    <li><strong><code>metadata.md</code>:</strong> Explicitly defines variable definitions, physical units (e.g., m³/s, mg/L), and spatial coordinate reference systems (CRS).</li>
+  </ul>
+
+  <h2>4. Pin Dependencies to Prevent Environment Drift</h2>
+
+  <p>Running a script written two years prior often yields <code>DeprecationWarning</code> or <code>ModuleNotFoundError</code> errors. External library updates break code over time unless dependencies are explicitly pinned.</p>
+
+  <blockquote>
+    <p><strong>The Golden Rule:</strong> Never use your base or global system installation. Create a dedicated, isolated environment for every single project.</p>
+  </blockquote>
+
+  <h3>Example Workflows: Choose Your Approach</h3>
+  <p>Whether you prefer tracking environments centrally or keeping environment files self-contained directly inside your project folder, the ultimate goal is consistency across setups.</p>
+
+  <h4>Option A: Named Conda Environments (Centralized)</h4>
+  <p>This stores your environment in your system's central Conda registry while keeping your project directory clean.</p>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span class="code-lang">bash</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+    </div>
+    <pre><code><span class="syntax-comment"># 1. Create a named global environment</span>
+conda create --name my_project_env -c conda-forge python=3.10 ipykernel geopandas xarray matplotlib
+
+<span class="syntax-comment"># 2. Activate the environment by name</span>
+conda activate my_project_env
+
+<span class="syntax-comment"># 3. Export environment specifications when code is finalized</span>
+conda env export --no-builds > environment.yml</code></pre>
+  </div>
+
+  <h4>Option B: Local Directory Environments (Path-Based)</h4>
+  <p>This places the environment inside a <code>.venv/</code> folder directly in your project root, making it portable and easy to clean up if you delete the project. Remember that Conda is not the only way to do it — you can use standard Python virtual environments (e.g., <code>venv</code> or <code>virtualenv</code>) instead.</p>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span class="code-lang">bash</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+    </div>
+    <pre><code><span class="syntax-comment"># 1. Create an isolated environment inside your project directory</span>
+conda create --prefix ./.venv -c conda-forge python=3.10 ipykernel geopandas xarray matplotlib
+
+<span class="syntax-comment"># 2. Activate using the local path</span>
+<span class="syntax-comment"># macOS / Linux:</span>
+conda activate ./.venv
+<span class="syntax-comment"># Windows:</span>
+conda activate .\.venv
+
+<span class="syntax-comment"># 3. Export OS-safe environment specifications when finalized</span>
+python -c <span class="syntax-string">"import subprocess, re; out = subprocess.check_output(['conda', 'env', 'export', '--no-builds']).decode(); print(re.sub(r'prefix:.*', '', out).strip())"</span> > environment.yml</code></pre>
+  </div>
+
+  <p>Paired with a properly configured <code>.gitignore</code> (if you use Git for version control), your binary datasets, temporary cache files (<code>__pycache__/</code>), and local virtual environment folders (<code>.venv/</code>) remain untracked by Git, keeping your repository lightweight and secure.</p>
+
+  <h2>Automate It: One-Click Workspace Setup</h2>
+
+  <p>To enforce this standard across your lab or individual workflow, use the Python automation script below. It builds the full directory structure, enforces strict OS-safe directory validation, and generates starter template files in a single step.</p>
+
+  <blockquote>
+    <p><strong>Note:</strong> This template provides a standardized starting point and should be customized for your specific needs. The script initializes empty environment files, a starter <code>README.md</code>, and default directories ready for your data pipelines.</p>
+  </blockquote>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span class="code-lang">create_workspace.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy Script</button>
+    </div>
+    <pre><code><span class="syntax-keyword">import</span> argparse
+<span class="syntax-keyword">import</span> sys
+<span class="syntax-keyword">from</span> pathlib <span class="syntax-keyword">import</span> Path
+
+HINT_TEXT = <span class="syntax-string">"""
+========================================================================
+Project Naming Convention: [Year]_[Type]_[Where]_[Topic]
+------------------------------------------------------------------------
+  Year  : Target / final publication year (e.g., 2026)
+  Type  : J (Journal Article), C (Conference), B (Book Chapter)
+  Where : Study region or catchment (e.g., Padma, Ganges, Meghna)
+  Topic : Primary model or phenomenon (e.g., SWAT_Extremes, ERA5_Floods)
+
+  Example: 2026_J_Padma_Sediment_Hysteresis
+========================================================================
+"""</span>
+
+
+<span class="syntax-keyword">def</span> <span class="syntax-string">parse_args</span>():
+    parser = argparse.ArgumentParser(
+        description=<span class="syntax-string">"Generate a standardized research workspace."</span>,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=HINT_TEXT,
+    )
+    parser.add_argument(
+        <span class="syntax-string">"project_name"</span>,
+        nargs=<span class="syntax-string">"?"</span>,
+        help=<span class="syntax-string">"Project name following [Year]_[Type]_[Where]_[Topic]"</span>,
+    )
+    <span class="syntax-keyword">return</span> parser, parser.parse_args()
+
+
+<span class="syntax-keyword">def</span> <span class="syntax-string">validate_project_name</span>(project_name: str, parser: argparse.ArgumentParser) -> str:
+    <span class="syntax-string">"""Ensure the name is a single, safe directory name."""</span>
+    project_name = project_name.strip()
+    project_path = Path(project_name)
+
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> project_name:
+        parser.error(<span class="syntax-string">"Project name cannot be empty."</span>)
+
+    <span class="syntax-keyword">if</span> (
+        project_path.is_absolute()
+        <span class="syntax-keyword">or</span> len(project_path.parts) != 1
+        <span class="syntax-keyword">or</span> project_name <span class="syntax-keyword">in</span> {<span class="syntax-string">"."</span>, <span class="syntax-string">".."</span>}
+        <span class="syntax-keyword">or</span> <span class="syntax-string">"/"</span> <span class="syntax-keyword">in</span> project_name
+        <span class="syntax-keyword">or</span> <span class="syntax-string">"\\"</span> <span class="syntax-keyword">in</span> project_name
+    ):
+        parser.error(<span class="syntax-string">"Project name must be a single directory name, not a path."</span>)
+
+    <span class="syntax-keyword">if</span> any(char <span class="syntax-keyword">in</span> project_name <span class="syntax-keyword">for</span> char <span class="syntax-keyword">in</span> <span class="syntax-string">'<>:"|?*'</span>):
+        parser.error(<span class="syntax-string">'Project name contains forbidden characters: <>:"|?*'</span>)
+
+    <span class="syntax-keyword">return</span> project_name
+
+
+<span class="syntax-keyword">def</span> <span class="syntax-string">main</span>():
+    parser, args = parse_args()
+    project_name = args.project_name
+
+    <span class="syntax-keyword">if</span> project_name <span class="syntax-keyword">is</span> None:
+        print(HINT_TEXT)
+        <span class="syntax-keyword">try</span>:
+            project_name = input(<span class="syntax-string">"Enter project name: "</span>).strip()
+        <span class="syntax-keyword">except</span> (EOFError, KeyboardInterrupt):
+            print(<span class="syntax-string">"\nCancelled."</span>)
+            sys.exit(0)
+
+    project_name = validate_project_name(project_name, parser)
+    base_dir = Path.cwd() / project_name
+
+    <span class="syntax-keyword">if</span> base_dir.exists() <span class="syntax-keyword">and</span> any(base_dir.iterdir()):
+        print(f<span class="syntax-string">"Warning: Directory '{base_dir}' already exists and is not empty."</span>)
+
+    folders = [
+        <span class="syntax-string">"admin/meeting_notes"</span>,
+        <span class="syntax-string">"data/raw"</span>,
+        <span class="syntax-string">"data/processed"</span>,
+        <span class="syntax-string">"src"</span>,
+        <span class="syntax-string">"results/figures"</span>,
+        <span class="syntax-string">"results/tables"</span>,
+        <span class="syntax-string">"manuscript"</span>,
+    ]
+
+    files = {
+        <span class="syntax-string">"admin/project_scope.md"</span>: (
+            f<span class="syntax-string">"# Project Scope: {project_name}\n\n"</span>
+            <span class="syntax-string">"## 1. Research Questions and Hypotheses\n"</span>
+            <span class="syntax-string">"- **RQ1:** [Insert primary research question]\n"</span>
+            <span class="syntax-string">"- **H1:** [Insert hypothesis]\n\n"</span>
+            <span class="syntax-string">"## 2. Objectives and Deliverables\n"</span>
+            <span class="syntax-string">"- [ ] Data collection & pre-processing pipeline\n"</span>
+            <span class="syntax-string">"- [ ] Exploratory analysis & model implementation\n"</span>
+            <span class="syntax-string">"- [ ] Manuscript draft & figure generation\n"</span>
+        ),
+        <span class="syntax-string">"admin/data_inventory.csv"</span>: (
+            <span class="syntax-string">"dataset_id,source_agency,access_url,spatial_coverage,temporal_range,license_terms\n"</span>
+        ),
+        <span class="syntax-string">"admin/metadata.md"</span>: (
+            <span class="syntax-string">"# Dataset Metadata & Variable Dictionary\n\n"</span>
+            <span class="syntax-string">"## Variables & Units\n"</span>
+            <span class="syntax-string">"| Parameter | Variable Name | Unit | Description | Coordinate System (CRS) |\n"</span>
+            <span class="syntax-string">"|---|---|---|---|---|\n"</span>
+            <span class="syntax-string">"| Streamflow | Q | m³/s | Observed discharge at outlet | EPSG:4326 |\n"</span>
+            <span class="syntax-string">"| Sediment Conc. | SSC | mg/L | Suspended sediment concentration | EPSG:4326 |\n"</span>
+        ),
+        <span class="syntax-string">".gitignore"</span>: (
+            <span class="syntax-string">"# Research Data\n"</span>
+            <span class="syntax-string">"data/raw/\n"</span>
+            <span class="syntax-string">"data/processed/\n"</span>
+            <span class="syntax-string">"*.nc\n*.nc4\n*.h5\n*.hdf5\n*.tif\n*.tiff\n*.grib\n*.grb\n*.parquet\n*.zip\n*.tar\n*.tar.gz\n\n"</span>
+            <span class="syntax-string">"# Administrative & Private Notes\n"</span>
+            <span class="syntax-string">"admin/private/\n"</span>
+            <span class="syntax-string">"admin/*.pdf\n\n"</span>
+            <span class="syntax-string">"# Python & Conda Environments\n"</span>
+            <span class="syntax-string">"__pycache__/\n"</span>
+            <span class="syntax-string">"*.py[cod]\n"</span>
+            <span class="syntax-string">".ipynb_checkpoints/\n"</span>
+            <span class="syntax-string">".venv/\n"</span>
+            <span class="syntax-string">"env/\n"</span>
+            <span class="syntax-string">"venv/\n"</span>
+            <span class="syntax-string">"*.log\n\n"</span>
+            <span class="syntax-string">"# OS Clutter\n"</span>
+            <span class="syntax-string">".DS_Store\n"</span>
+            <span class="syntax-string">"Thumbs.db\n"</span>
+        ),
+        <span class="syntax-string">"README.md"</span>: (
+            f<span class="syntax-string">"# {project_name}\n\n"</span>
+            <span class="syntax-string">"## Project Overview\n"</span>
+            <span class="syntax-string">"- **Author(s):** [Insert Name / Lab]\n"</span>
+            <span class="syntax-string">"- **Status:** Planning / In Progress / Under Review\n"</span>
+            <span class="syntax-string">"- **Abstract:** [Brief summary of project scope, core questions, and methodology]\n\n"</span>
+            <span class="syntax-string">"---\n\n"</span>
+            <span class="syntax-string">"## Workspace Structure\n"</span>
+            <span class="syntax-string">"```text\n"</span>
+            f<span class="syntax-string">"{project_name}/\n"</span>
+            <span class="syntax-string">"├── admin/               # Project scope, data inventory, metadata, and meeting logs\n"</span>
+            <span class="syntax-string">"│   ├── meeting_notes/\n"</span>
+            <span class="syntax-string">"│   ├── data_inventory.csv\n"</span>
+            <span class="syntax-string">"│   ├── metadata.md\n"</span>
+            <span class="syntax-string">"│   └── project_scope.md\n"</span>
+            <span class="syntax-string">"├── data/                # Project data (ignored in git)\n"</span>
+            <span class="syntax-string">"│   ├── raw/             # Read-only original datasets\n"</span>
+            <span class="syntax-string">"│   └── processed/       # Cleaned, transformed output datasets\n"</span>
+            <span class="syntax-string">"├── src/                 # Reusable scripts, functions, and computational notebooks\n"</span>
+            <span class="syntax-string">"├── results/             # Analysis outputs\n"</span>
+            <span class="syntax-string">"│   ├── figures/         # Plots, charts, and maps\n"</span>
+            <span class="syntax-string">"│   └── tables/          # Summary tables and statistics\n"</span>
+            <span class="syntax-string">"├── manuscript/          # LaTeX/Word drafts, references (.bib), and supplementary docs\n"</span>
+            <span class="syntax-string">"├── .gitignore\n"</span>
+            <span class="syntax-string">"├── environment.yml      # Conda environment specifications\n"</span>
+            <span class="syntax-string">"├── requirements.txt     # Pip package requirements\n"</span>
+            <span class="syntax-string">"└── README.md\n"</span>
+            <span class="syntax-string">"```\n"</span>
+        ),
+        <span class="syntax-string">"requirements.txt"</span>: <span class="syntax-string">""</span>,
+        <span class="syntax-string">"environment.yml"</span>: <span class="syntax-string">""</span>,
+    }
+
+    base_dir.mkdir(parents=<span class="syntax-keyword">True</span>, exist_ok=<span class="syntax-keyword">True</span>)
+    <span class="syntax-keyword">for</span> folder <span class="syntax-keyword">in</span> folders:
+        (base_dir / folder).mkdir(parents=<span class="syntax-keyword">True</span>, exist_ok=<span class="syntax-keyword">True</span>)
+
+    <span class="syntax-keyword">for</span> filename, content <span class="syntax-keyword">in</span> files.items():
+        file_path = base_dir / filename
+        <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> file_path.exists():
+            file_path.write_text(content, encoding=<span class="syntax-string">"utf-8"</span>)
+
+    print(f<span class="syntax-string">"\n✅ Research workspace created successfully at:\n   {base_dir}"</span>)
+
+
+<span class="syntax-keyword">if</span> __name__ == <span class="syntax-string">"__main__"</span>:
+    main()</code></pre>
+  </div>
+
+  <h2>Summary</h2>
+
+  <p>Standardizing your research workspace is an investment in long-term reproducibility. By implementing a systematic naming convention, isolating data from code, tracking metadata, and pinning dependencies, you eliminate versioning confusion and make your work accessible for collaboration, revision, and peer review.</p>
+</div>
+
+<script>
+  function copyCode(button) {
+    const container = button.closest('.code-container');
+    const codeBlock = container.querySelector('pre code');
+    
+    // Create a temporary DOM element to extract clean text without HTML span tags
+    const tempElement = document.createElement('div');
+    tempElement.innerHTML = codeBlock.innerHTML;
+    const codeText = tempElement.textContent || tempElement.innerText;
+
+    navigator.clipboard.writeText(codeText.trim()).then(() => {
+      const originalText = button.innerText;
+      button.innerText = 'Copied!';
+      button.classList.add('copied');
+
+      setTimeout(() => {
+        button.innerText = originalText;
+        button.classList.remove('copied');
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy code: ', err);
+    });
+  }
+</script>
+
+</body>
+</html>
